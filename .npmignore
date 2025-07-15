@@ -7,7 +7,7 @@
 test/
 schema/
 tmp/
-src/
+.prds/
 
 # Build files
 tsconfig.json

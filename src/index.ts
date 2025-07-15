@@ -3,13 +3,6 @@ import { Command } from "commander";
 import { generateOperations } from "./generator";
 import { logger } from "./logger";
 import process from "node:process";
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const packageJson = JSON.parse(readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
 
 async function main() {
   try {
@@ -18,7 +11,7 @@ async function main() {
     program
       .name("better-gql-generator")
       .description("Generate GraphQL operations from a local SDL schema")
-      .version(packageJson.version)
+      .version("1.0.2") // Hardcoded version - update when changing package.json version
       .requiredOption("--schema <path>", "Path to GraphQL schema file (SDL format)")
       .option("--out <dir>", "Output directory for generated files", "generated-gql")
       .option("--queries", "Generate Query operations", true)
