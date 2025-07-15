@@ -3,14 +3,47 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import { generateOperations } from "../src/generator.js";
-import { VERSION } from "../src/version.js";
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
+
+// Define the type for commander options
+interface CommandOptions {
+  schema: string;
+  out: string;
+  queries: boolean;
+  mutations: boolean;
+  subscriptions: boolean;
+  silent: boolean;
+  verbose: boolean;
+}
+
+// Read version from package.json
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Determine if we're running from source or from dist
+// The path will be either /dist/bin or /bin
+const isRunningFromDist = __dirname.includes('/dist/') || __dirname.includes('\\dist\\');
+const rootDir = isRunningFromDist ? resolve(__dirname, '../..') : resolve(__dirname, '..');
+const packageJsonPath = resolve(rootDir, 'package.json');
+
+let version: string;
+try {
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+  version = packageJson.version;
+} catch (error) {
+  // Only show the warning if in verbose mode
+  console.error(`Warning: Could not read package.json for version: ${error}`);
+  version = "1.0.0"; // Default fallback version
+}
 
 const program = new Command();
 
 program
   .name("better-gql-generator")
   .description("Generate GraphQL operations from a local schema file")
-  .version(VERSION)
+  .version(version)
   .requiredOption(
     "-s, --schema <path>",
     "Path to GraphQL schema file (SDL format)"
@@ -25,7 +58,7 @@ program
   .option("--subscriptions", "Generate Subscription operations", false)
   .option("--silent", "Suppress logs", false)
   .option("--verbose", "Show debug output", false)
-  .action(async (options) => {
+  .action(async (options: CommandOptions) => {
     try {
       if (!options.silent) {
         console.log(chalk.cyan("⚡ better-gql-generator"));
