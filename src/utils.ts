@@ -99,3 +99,29 @@ function printType(type: GraphQLInputType): string {
   }
   return type.toString();
 }
+
+/**
+ * Process schema content to handle custom directives
+ * This adds directive definitions for AWS AppSync and other common custom directives
+ */
+export function processSchemaWithCustomDirectives(schemaContent: string): string {
+  // Add directive definitions for AWS AppSync directives if they don't already exist
+  const directiveDefinitions = `
+# AWS AppSync directives
+directive @aws_api_key on FIELD_DEFINITION | OBJECT
+directive @aws_cognito_user_pools on FIELD_DEFINITION | OBJECT
+directive @aws_iam on FIELD_DEFINITION | OBJECT
+directive @aws_lambda on FIELD_DEFINITION | OBJECT
+directive @aws_subscribe(mutations: [String!]!) on FIELD_DEFINITION
+directive @aws_auth(cognito_groups: [String!]) on FIELD_DEFINITION | OBJECT
+directive @aws_oidc on FIELD_DEFINITION | OBJECT
+# Add any other custom directives you need here
+`;
+
+  // Check if schema already has these directives defined
+  if (!schemaContent.includes("directive @aws_cognito_user_pools")) {
+    return directiveDefinitions + schemaContent;
+  }
+  
+  return schemaContent;
+}

@@ -1,7 +1,7 @@
 import { buildSchema, GraphQLSchema, GraphQLObjectType, GraphQLField } from "graphql";
 import { mkdir, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
-import { formatOperationName, formatArgumentsAsVariables, formatSelectionSet } from "./utils";
+import { formatOperationName, formatArgumentsAsVariables, formatSelectionSet, processSchemaWithCustomDirectives } from "./utils";
 import { logger } from "./logger";
 
 export interface GenerateOperationsOptions {
@@ -23,8 +23,11 @@ export async function generateOperations(options: GenerateOperationsOptions): Pr
   // Read schema from file
   const schemaContent = await Bun.file(schemaPath).text();
 
+  // Process schema with custom directives (e.g., AWS AppSync directives)
+  const processedSchema = processSchemaWithCustomDirectives(schemaContent);
+
   // Parse schema
-  const schema = buildSchema(schemaContent);
+  const schema = buildSchema(processedSchema);
 
   const results: string[] = [];
 

@@ -11,7 +11,7 @@ async function main() {
     program
       .name("better-gql-generator")
       .description("Generate GraphQL operations from a local SDL schema")
-      .version("1.0.2") // Hardcoded version - update when changing package.json version
+      .version("1.0.3") // Hardcoded version - update when changing package.json version
       .requiredOption("--schema <path>", "Path to GraphQL schema file (SDL format)")
       .option("--out <dir>", "Output directory for generated files", "generated-gql")
       .option("--queries", "Generate Query operations", true)
