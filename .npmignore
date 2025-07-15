@@ -1,0 +1,19 @@
+# Development files
+.git
+.github
+.gitignore
+.vscode
+.idea
+test/
+schema/
+tmp/
+src/
+
+# Build files
+tsconfig.json
+bunfig.toml
+bun.lock
+
+# Misc
+.DS_Store
+node_modules/
