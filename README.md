@@ -111,6 +111,39 @@ query GetUser($id: ID!) {
 }
 ```
 
+## AWS AppSync Directives
+
+This tool includes support for AWS AppSync directives in GraphQL schemas. It automatically:
+
+1. Recognizes common AWS directives like `@aws_cognito_user_pools`, `@aws_api_key`, etc.
+2. Strips these directives from the generated operations
+
+### Example of Directive Stripping
+
+Given a schema with AWS directives:
+
+```graphql
+type CustomerImport @aws_cognito_user_pools {
+  completedAt: String
+  createdAt: String!
+  source: CustomerImportSource!
+  status: CustomerImportStatus!
+}
+```
+
+The generated operation will have the directive removed:
+
+```graphql
+query GetCustomerImport($id: ID!) {
+  getCustomerImport(id: $id) {
+    completedAt
+    createdAt
+    source
+    status
+  }
+}
+```
+
 ## Development
 
 ### Setup

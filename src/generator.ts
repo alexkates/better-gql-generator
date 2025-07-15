@@ -1,7 +1,7 @@
 import { buildSchema, GraphQLSchema, GraphQLObjectType, GraphQLField } from "graphql";
 import { mkdir, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
-import { formatOperationName, formatArgumentsAsVariables, formatSelectionSet, processSchemaWithCustomDirectives } from "./utils";
+import { formatOperationName, formatArgumentsAsVariables, formatSelectionSet, processSchemaWithCustomDirectives, stripAwsDirectives } from "./utils";
 import { logger } from "./logger";
 
 export interface GenerateOperationsOptions {
@@ -26,8 +26,11 @@ export async function generateOperations(options: GenerateOperationsOptions): Pr
   // Process schema with custom directives (e.g., AWS AppSync directives)
   const processedSchema = processSchemaWithCustomDirectives(schemaContent);
 
+  // Strip AWS directives from the schema without adding definitions
+  const strippedSchema = stripAwsDirectives(processedSchema);
+
   // Parse schema
-  const schema = buildSchema(processedSchema);
+  const schema = buildSchema(strippedSchema);
 
   const results: string[] = [];
 
@@ -139,9 +142,12 @@ function formatOperation(operationType: "query" | "mutation" | "subscription", f
   const variables = formatArgumentsAsVariables(field.args);
   const selectionSet = formatSelectionSet(field.type);
 
-  return `${operationType} ${operationName}${variables ? `(${variables})` : ""} {
+  const operation = `${operationType} ${operationName}${variables ? `(${variables})` : ""} {
   ${fieldName}${variables ? `(${formatArgumentsForOperation(field.args as any)})` : ""} ${selectionSet}
 }`;
+
+  // Always strip AWS directives from the operation
+  return stripAwsDirectives(operation);
 }
 
 /**

@@ -32,6 +32,7 @@ async function main() {
 
     logger.info(`Using schema from ${options.schema}`);
     logger.info(`Output directory: ${options.out}`);
+    logger.info("AWS AppSync directives will be automatically stripped from generated operations");
 
     const result = await generateOperations({
       schemaPath: options.schema,

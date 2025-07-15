@@ -65,9 +65,12 @@ export function formatSelectionSet(type: GraphQLType): string {
       fieldStrings.push("__typename");
     }
 
-    return `{
+    // Create selection set and strip any AWS directives
+    const selectionSet = `{
     ${fieldStrings.join("\n    ")}
   }`;
+
+    return stripAwsDirectives(selectionSet);
   }
 
   // Default to empty selection set
@@ -102,26 +105,46 @@ function printType(type: GraphQLInputType): string {
 
 /**
  * Process schema content to handle custom directives
- * This adds directive definitions for AWS AppSync and other common custom directives
+ * Currently just passes through the schema content
  */
 export function processSchemaWithCustomDirectives(schemaContent: string): string {
-  // Add directive definitions for AWS AppSync directives if they don't already exist
-  const directiveDefinitions = `
-# AWS AppSync directives
-directive @aws_api_key on FIELD_DEFINITION | OBJECT
-directive @aws_cognito_user_pools on FIELD_DEFINITION | OBJECT
-directive @aws_iam on FIELD_DEFINITION | OBJECT
-directive @aws_lambda on FIELD_DEFINITION | OBJECT
-directive @aws_subscribe(mutations: [String!]!) on FIELD_DEFINITION
-directive @aws_auth(cognito_groups: [String!]) on FIELD_DEFINITION | OBJECT
-directive @aws_oidc on FIELD_DEFINITION | OBJECT
-# Add any other custom directives you need here
-`;
-
-  // Check if schema already has these directives defined
-  if (!schemaContent.includes("directive @aws_cognito_user_pools")) {
-    return directiveDefinitions + schemaContent;
-  }
-
+  // In this simplified version, we just pass through the schema
+  // since we're now only stripping AWS directives rather than adding definitions
   return schemaContent;
+}
+
+/**
+ * Strips AWS directives from GraphQL type definitions
+ * This removes directives like @aws_cognito_user_pools from types
+ */
+export function stripAwsDirectives(content: string): string {
+  // List of AWS directives to remove
+  const awsDirectives = [
+    "@aws_api_key",
+    "@aws_cognito_user_pools",
+    "@aws_iam",
+    "@aws_lambda",
+    "@aws_subscribe(mutations: [String!]!)",
+    "@aws_auth(cognito_groups: [String!])",
+    "@aws_oidc",
+    // Add any other AWS directives you want to strip
+  ];
+
+  // Create a regex pattern that matches any of the AWS directives
+  // This handles directives with optional parameters as well
+  let processedContent = content;
+
+  // Remove AWS directives from types and fields
+  // Handle both parameterized directives like @aws_subscribe(mutations: ["createItem"])
+  // and simple directives like @aws_cognito_user_pools
+  awsDirectives.forEach((directive) => {
+    // Get the directive name without parameters
+    const directiveName = directive.split("(")[0];
+
+    // Create regex to match the directive with any parameters
+    const regex = new RegExp(`\\s*${directiveName}(\\([^)]*\\))?`, "g");
+    processedContent = processedContent.replace(regex, "");
+  });
+
+  return processedContent;
 }
