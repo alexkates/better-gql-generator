@@ -10,6 +10,7 @@ A modern CLI tool that generates GraphQL operations (queries, mutations, subscri
 - ✅ CLI interface only — no config files or project setup required
 - ✅ Native unit tests via Node.js's `node:test`
 - ✅ Developer-friendly, colorful CLI output via `chalk`
+- ✅ Zero configuration with reasonable defaults
 
 ## Installation
 
@@ -19,6 +20,19 @@ npm install -g better-gql-generator
 
 # Or run with npx
 npx better-gql-generator --schema ./schema.graphql
+```
+
+## Quick Start
+
+```bash
+# Generate queries and mutations from a schema
+npx better-gql-generator --schema ./schema.graphql
+
+# Generate only queries
+npx better-gql-generator --schema ./schema.graphql --queries --no-mutations
+
+# Specify output directory
+npx better-gql-generator --schema ./schema.graphql --out ./my-operations
 ```
 
 ## Usage
@@ -36,6 +50,8 @@ npx better-gql-generator --schema ./schema.graphql --out ./generated --queries -
 | `--queries`           | Generate Query operations                | true            |
 | `--mutations`         | Generate Mutation operations             | true            |
 | `--subscriptions`     | Generate Subscription operations         | false           |
+| `--no-queries`        | Skip generating Query operations         | false           |
+| `--no-mutations`      | Skip generating Mutation operations      | false           |
 | `--silent`            | Suppress logs                            | false           |
 | `--verbose`           | Show debug output                        | false           |
 | `-h, --help`          | Display usage                            |                 |
@@ -48,10 +64,13 @@ Generated files are saved in separate folders per operation type:
 ```
 generated-gql/
 ├── queries/
-│   └── getUser.graphql
+│   ├── getUser.graphql
+│   └── listUsers.graphql
 ├── mutations/
+│   ├── createUser.graphql
 │   └── updateUser.graphql
-├── subscriptions/
+└── subscriptions/
+    └── userUpdated.graphql
 ```
 
 ## Example Output
@@ -90,6 +109,10 @@ Note that the generator automatically creates a properly formatted GraphQL opera
 ## Development
 
 ```bash
+# Clone the repository
+git clone https://github.com/alexkates/better-gql-generator.git
+cd better-gql-generator
+
 # Install dependencies
 npm install
 
@@ -102,6 +125,16 @@ npm test
 # Run locally
 npm run dev -- --schema ./test/fixtures/schema.graphql
 ```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 

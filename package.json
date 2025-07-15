@@ -6,13 +6,19 @@
   "bin": {
     "better-gql-generator": "dist/bin/index.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "start": "node dist/bin/index.js",
     "dev": "ts-node bin/index.ts",
-    "test": "node --loader ts-node/esm --test test/generator.test.ts",
+    "test": "node --loader ts-node/esm --test test/generator.test.ts test/kitchen-sink.test.ts",
     "lint": "eslint . --ext .ts",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint"
   },
   "keywords": [
     "graphql",
@@ -36,10 +42,13 @@
     "graphql": "^16.8.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.31.0",
     "@types/node": "^20.10.0",
-    "eslint": "^8.53.0",
+    "eslint": "^9.31.0",
+    "globals": "^16.3.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "typescript-eslint": "^8.37.0"
   },
   "type": "module",
   "engines": {
