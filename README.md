@@ -1,5 +1,10 @@
 # better-gql-generator
 
+[![npm version](https://img.shields.io/npm/v/better-gql-generator.svg)](https://www.npmjs.com/package/better-gql-generator)
+[![CI](https://github.com/alexkates/better-gql-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/alexkates/better-gql-generator/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm downloads](https://img.shields.io/npm/dm/better-gql-generator.svg)](https://www.npmjs.com/package/better-gql-generator)
+
 A Bun + TypeScript-powered CLI tool that generates GraphQL operations (queries, mutations, subscriptions) from a local SDL schema. Designed to be fast, lightweight, and easily distributed as a binary using Bun's bundler.
 
 ## Features
@@ -112,7 +117,7 @@ query GetUser($id: ID!) {
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/better-gql-generator.git
+git clone https://github.com/alexkates/better-gql-generator.git
 cd better-gql-generator
 
 # Install dependencies
@@ -140,8 +145,22 @@ This will create a `better-gql-generator` executable in the `bin` directory.
 This package is set up for NPM publishing. When you publish it, the binary will be included and made available to users:
 
 ```bash
+# Bump the version (patch, minor, or major)
+npm version patch # or minor or major
+
+# Publish to npm
 npm publish
 ```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 

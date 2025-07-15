@@ -7,6 +7,14 @@
   "bin": {
     "better-gql-generator": "bin/better-gql-generator"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexkates/better-gql-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alexkates/better-gql-generator/issues"
+  },
+  "homepage": "https://github.com/alexkates/better-gql-generator#readme",
   "scripts": {
     "start": "bun src/index.ts",
     "test": "bun test",
