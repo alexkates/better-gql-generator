@@ -122,6 +122,6 @@ directive @aws_oidc on FIELD_DEFINITION | OBJECT
   if (!schemaContent.includes("directive @aws_cognito_user_pools")) {
     return directiveDefinitions + schemaContent;
   }
-  
+
   return schemaContent;
 }
