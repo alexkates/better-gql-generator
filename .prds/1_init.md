@@ -3,48 +3,52 @@
 **Project Name:** `better-gql-generator`  
 **Version:** 1.0.0  
 **Owner:** Alex Kates  
-**Description:** A modern CLI tool that generates GraphQL operations (queries, mutations, subscriptions) from a local schema using TypeScript. Designed for simplicity, speed, and developer happiness.
+**Description:** A Bun + TypeScript-powered CLI tool that generates GraphQL operations (queries, mutations, subscriptions) from a local SDL schema. Designed to be fast, lightweight, and easily distributed as a binary using Bun's bundler.
 
 ---
 
 ## Overview
 
-`better-gql-generator` is a TypeScript-based CLI that helps developers bootstrap GraphQL operation files (`.graphql`) from a local SDL schema. It offers a zero-config setup powered by CLI flags and includes stylish output using `chalk`, flexible controls via `commander`, and a native test suite using `node:test`.
+`better-gql-generator` is a CLI utility built with [Bun](https://bun.sh) and TypeScript that generates `.graphql` operation files (queries, mutations, and subscriptions) based on a local GraphQL schema (SDL format). It features high performance, a slick developer experience, and bundling into a single executable with Bun's binary compiler.
 
 ---
 
 ## Features
 
-- ✅ Generate `.graphql` operation files from a local SDL schema  
-- ✅ Supports `Query`, `Mutation`, and `Subscription` generation  
-- ✅ Grouped output into directories by operation type  
-- ✅ CLI interface only — no config files or project setup required  
-- ✅ Native unit tests via Node.js’s `node:test`  
-- ✅ Developer-friendly, colorful CLI output via `chalk`
+- ⚡ Blazing fast with Bun runtime
+- 🧠 Written in TypeScript with type safety
+- 🧰 CLI-only configuration using Bun's native argument parser
+- 📁 Outputs `.graphql` files grouped by operation type
+- 🧪 Built-in test suite using `bun test`
+- 📦 Compiles into a single binary using Bun's `bun build`
 
 ---
 
 ## CLI Usage
 
 ```bash
-npx better-gql-generator --schema ./schema.graphql --out ./generated --queries --mutations
+bun run src/index.ts --schema ./schema.graphql --out ./generated --queries --mutations
+```
+
+Or as a compiled binary:
+
+```bash
+./better-gql-generator --schema ./schema.graphql --out ./generated --queries --mutations
 ```
 
 ### CLI Options
 
-| Flag                      | Description                                              | Default             |
-|---------------------------|----------------------------------------------------------|---------------------|
-| `-s, --schema <path>`     | Path to GraphQL schema file (SDL format)                 | _required_          |
-| `-o, --out <dir>`         | Output directory for generated files                     | `generated-gql`     |
-| `--queries`               | Generate Query operations                                | true                |
-| `--mutations`             | Generate Mutation operations                             | true                |
-| `--subscriptions`         | Generate Subscription operations                         | false               |
-| `--silent`                | Suppress logs                                            | false               |
-| `--verbose`               | Show debug output                                        | false               |
-| `-h, --help`              | Display usage                                            |                     |
-| `-v, --version`           | Show version                                             |                     |
-
-> Note: All options are passed via CLI flags. No support for `.gqlgenrc.json` or similar files in MVP.
+| Flag              | Description                              | Default         |
+| ----------------- | ---------------------------------------- | --------------- |
+| `--schema <path>` | Path to GraphQL schema file (SDL format) | _required_      |
+| `--out <dir>`     | Output directory for generated files     | `generated-gql` |
+| `--queries`       | Generate Query operations                | true            |
+| `--mutations`     | Generate Mutation operations             | true            |
+| `--subscriptions` | Generate Subscription operations         | false           |
+| `--silent`        | Suppress logs                            | false           |
+| `--verbose`       | Show debug output                        | false           |
+| `--help`          | Show help output                         |                 |
+| `--version`       | Show version number                      |                 |
 
 ---
 
@@ -93,15 +97,12 @@ query GetUser($id: ID!) {
 
 ## Stack
 
-| Tool           | Purpose                        |
-|----------------|--------------------------------|
-| **TypeScript** | Safe, maintainable codebase    |
-| `commander`    | Argument parsing for CLI       |
-| `chalk`        | Stylized CLI output            |
-| `graphql`      | Schema parsing and AST         |
-| `fs/promises`  | File output                    |
-| `node:test`    | Built-in test framework        |
-| `assert`       | Node.js assertion library      |
+| Tool           | Purpose                          |
+| -------------- | -------------------------------- |
+| **Bun**        | Runtime, bundler, test runner    |
+| **TypeScript** | Safe, typed code                 |
+| `graphql`      | Schema parsing and AST traversal |
+| `fs/promises`  | File I/O                         |
 
 ---
 
@@ -109,15 +110,16 @@ query GetUser($id: ID!) {
 
 ```
 better-gql-generator/
-├── bin/
-│   └── index.ts           # CLI entry
 ├── src/
-│   ├── generator.ts       # Core logic
-│   ├── utils.ts           # Helpers (e.g., formatting, file I/O)
+│   ├── index.ts              # CLI entry point
+│   ├── generator.ts          # Core logic for generation
+│   ├── logger.ts             # Optional verbose/silent logging
+│   └── utils.ts              # Helpers for formatting and I/O
 ├── test/
-│   ├── generator.test.ts  # Tests using node:test
-│   └── fixtures/          # Sample schema files
-├── package.json
+│   └── kitchen-sink.test.ts  # Complex schema test
+├── schema/
+│   └── kitchen-sink.graphql  # Full-featured SDL schema for testing
+├── bunfig.toml               # Bun config
 ├── tsconfig.json
 ├── README.md
 ```
@@ -126,48 +128,73 @@ better-gql-generator/
 
 ## Testing
 
-Use Node’s built-in `node:test` module to validate:
+Tests are written using [`bun test`](https://bun.sh/docs/cli/test), Bun’s built-in test runner.
 
-- Schema parsing  
-- Operation generation logic  
-- File writing behavior  
-- CLI flag handling  
-- Silent/verbose logging behavior  
+### Kitchen Sink Test
 
-### Sample Test
+A single, comprehensive test (`kitchen-sink.test.ts`) validates support for:
+
+- Interfaces
+- Unions
+- Enums
+- Input types with nesting
+- Custom scalars
+- Directives
+- Deep nesting and fragments
+
+#### Example Test
 
 ```ts
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { generateOperations } from '../src/generator';
+import { test } from "bun:test";
+import { generateOperations } from "../src/generator";
+import { strict as assert } from "assert";
 
-test('generates basic query', async () => {
-  const operations = await generateOperations({
-    schemaPath: './test/fixtures/schema.graphql',
-    outDir: './test/out',
+test("kitchen sink schema should generate valid operations", async () => {
+  const result = await generateOperations({
+    schemaPath: "./schema/kitchen-sink.graphql",
+    outDir: "./tmp",
     generateQueries: true,
-    generateMutations: false,
-    generateSubscriptions: false
+    generateMutations: true,
+    generateSubscriptions: true,
   });
-  assert.ok(operations.includes('query'));
+
+  assert.ok(result.includes("query"));
+  assert.ok(result.includes("mutation"));
+  assert.ok(result.includes("subscription"));
 });
 ```
 
-Run tests:
+Run with:
 
 ```bash
-node --test
+bun test
+```
+
+---
+
+## Building a Binary
+
+Compile to a binary using Bun:
+
+```bash
+bun build src/index.ts --compile --outfile=better-gql-generator
+```
+
+Then run:
+
+```bash
+./better-gql-generator --schema schema.graphql --out out --queries
 ```
 
 ---
 
 ## Future Enhancements
 
-- [ ] Add support for `.gqlgenrc.json`  
-- [ ] Custom output naming templates  
-- [ ] Remote schema introspection  
-- [ ] TypeScript typings for variables  
-- [ ] Watch mode for auto-generation  
+- [ ] Add support for `.gqlgenrc.json`
+- [ ] Customizable output file naming
+- [ ] Remote schema support via introspection
+- [ ] Watch mode
+- [ ] Output TypeScript variable typings
 
 ---
 
