@@ -26,7 +26,14 @@ export function formatArgumentsAsVariables(args: readonly any[]): string {
 /**
  * Formats a GraphQL selection set based on the field's type
  */
-export function formatSelectionSet(type: GraphQLType): string {
+export function formatSelectionSet(type: GraphQLType, depth: number = 0): string {
+  // Prevent infinite recursion with a max depth
+  if (depth > 3) {
+    return `{
+    id
+  }`;
+  }
+
   // Unwrap non-null and list types to get to the base object type
   let unwrappedType = unwrapType(type);
 
@@ -37,32 +44,72 @@ export function formatSelectionSet(type: GraphQLType): string {
 
   // For object, interface, or union types, create a selection set
   if (isObjectType(unwrappedType) || isInterfaceType(unwrappedType) || isUnionType(unwrappedType)) {
-    const fields = isObjectType(unwrappedType) || isInterfaceType(unwrappedType) ? unwrappedType.getFields() : {};
-
     const fieldStrings: string[] = [];
 
-    // If it's an object or interface, get all scalar fields
-    if (isObjectType(unwrappedType) || isInterfaceType(unwrappedType)) {
+    // If it's a union type, add __typename and handle each possible type
+    if (isUnionType(unwrappedType)) {
+      fieldStrings.push("__typename");
+
+      // Get all possible types in the union
+      const possibleTypes = unwrappedType.getTypes();
+
+      // Add fragments for each possible type
+      for (const possibleType of possibleTypes) {
+        // Get fields of this possible type
+        const fields = possibleType.getFields();
+        const fragmentFields: string[] = [];
+
+        // Get scalar and simple fields for this type
+        for (const fieldName in fields) {
+          const field = fields[fieldName];
+          const fieldType = unwrapType(field.type);
+
+          if (isScalarType(fieldType) || isEnumType(fieldType)) {
+            fragmentFields.push(`      ${fieldName}`);
+          } else if (isObjectType(fieldType) || isInterfaceType(fieldType)) {
+            // Add a simple nested selection with ID for complex fields
+            fragmentFields.push(`      ${fieldName} {
+        id
+      }`);
+          }
+        }
+
+        // Add the fragment for this type
+        fieldStrings.push(`    ... on ${possibleType.name} {
+${fragmentFields.join("\n")}
+    }`);
+      }
+    }
+    // If it's an object or interface, get all fields
+    else if (isObjectType(unwrappedType) || isInterfaceType(unwrappedType)) {
+      // Always include __typename for interfaces
+      if (isInterfaceType(unwrappedType)) {
+        fieldStrings.push("__typename");
+      }
+
+      const fields = unwrappedType.getFields();
+
       for (const fieldName in fields) {
         const field = fields[fieldName];
         const fieldType = unwrapType(field.type);
 
-        // Only include scalar and enum fields directly
+        // Include scalar and enum fields directly
         if (isScalarType(fieldType) || isEnumType(fieldType)) {
           fieldStrings.push(fieldName);
-        } else if (isObjectType(fieldType) || isInterfaceType(fieldType)) {
-          // For object types, create a nested selection with just ID field to keep it simple
-          fieldStrings.push(`${fieldName} {
-      id
-    }`);
+        } else if (isObjectType(fieldType)) {
+          // Create a nested selection for object types
+          const nestedSelectionSet = formatSelectionSet(fieldType, depth + 1);
+          fieldStrings.push(`${fieldName} ${nestedSelectionSet}`);
+        } else if (isInterfaceType(fieldType)) {
+          // For interface types, include the interface fields
+          const nestedSelectionSet = formatSelectionSet(fieldType, depth + 1);
+          fieldStrings.push(`${fieldName} ${nestedSelectionSet}`);
+        } else if (isUnionType(fieldType)) {
+          // For union types, include type-specific fragments
+          const nestedSelectionSet = formatSelectionSet(fieldType, depth + 1);
+          fieldStrings.push(`${fieldName} ${nestedSelectionSet}`);
         }
       }
-    }
-
-    // If it's a union type, we'd need to handle each possible type
-    // This is simplified to just include the __typename field
-    if (isUnionType(unwrappedType)) {
-      fieldStrings.push("__typename");
     }
 
     // Create selection set and strip any AWS directives

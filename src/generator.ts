@@ -140,7 +140,7 @@ async function generateOperationsFromType(type: GraphQLObjectType, operationType
 function formatOperation(operationType: "query" | "mutation" | "subscription", fieldName: string, field: GraphQLField<any, any>): string {
   const operationName = formatOperationName(fieldName);
   const variables = formatArgumentsAsVariables(field.args);
-  const selectionSet = formatSelectionSet(field.type);
+  const selectionSet = formatSelectionSet(field.type, 0);
 
   const operation = `${operationType} ${operationName}${variables ? `(${variables})` : ""} {
   ${fieldName}${variables ? `(${formatArgumentsForOperation(field.args as any)})` : ""} ${selectionSet}
