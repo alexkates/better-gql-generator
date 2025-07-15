@@ -1,0 +1,40 @@
+{
+  "name": "better-gql-generator",
+  "version": "1.0.0",
+  "description": "A modern CLI tool that generates GraphQL operations from a local schema using TypeScript",
+  "main": "dist/bin/index.js",
+  "bin": {
+    "better-gql-generator": "dist/bin/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/bin/index.js",
+    "dev": "ts-node bin/index.ts",
+    "test": "node --loader ts-node/esm --test test/generator.test.ts",
+    "lint": "eslint . --ext .ts",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "graphql",
+    "cli",
+    "code-generator",
+    "typescript"
+  ],
+  "author": "Alex Kates",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "graphql": "^16.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "eslint": "^8.53.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
