@@ -102,7 +102,6 @@ query GetUser($id: ID!) {
 | **Bun**        | Runtime, bundler, test runner    |
 | **TypeScript** | Safe, typed code                 |
 | `graphql`      | Schema parsing and AST traversal |
-| `fs/promises`  | File I/O                         |
 
 ---
 
