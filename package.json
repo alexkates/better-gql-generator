@@ -1,0 +1,37 @@
+{
+  "name": "better-gql-generator",
+  "version": "1.0.0",
+  "description": "A Bun + TypeScript-powered CLI tool that generates GraphQL operations from a local SDL schema",
+  "main": "src/index.ts",
+  "type": "module",
+  "bin": {
+    "better-gql-generator": "./bin/better-gql-generator"
+  },
+  "scripts": {
+    "start": "bun src/index.ts",
+    "test": "bun test",
+    "prebuild": "mkdir -p bin",
+    "build": "bun build src/index.ts --compile --outfile=bin/better-gql-generator",
+    "prepublishOnly": "bun run build",
+    "example": "bun src/index.ts --schema ./schema/kitchen-sink.graphql --out ./tmp/example --verbose"
+  },
+  "keywords": [
+    "graphql",
+    "generator",
+    "bun",
+    "typescript",
+    "cli"
+  ],
+  "author": "Alex Kates",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^14.0.0",
+    "graphql": "^16.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "bun-types": "latest",
+    "typescript": "^5.2.2"
+  }
+}
