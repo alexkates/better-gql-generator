@@ -3,16 +3,14 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import { generateOperations } from "../src/generator.js";
-
-// Use hardcoded version for simplicity
-const version = "1.0.0";
+import { VERSION } from "../src/version.js";
 
 const program = new Command();
 
 program
   .name("better-gql-generator")
   .description("Generate GraphQL operations from a local schema file")
-  .version(version)
+  .version(VERSION)
   .requiredOption(
     "-s, --schema <path>",
     "Path to GraphQL schema file (SDL format)"
