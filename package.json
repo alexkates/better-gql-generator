@@ -21,7 +21,8 @@
     "prebuild": "mkdir -p bin",
     "build": "bun build src/index.ts --compile --outfile=bin/better-gql-generator",
     "prepublishOnly": "bun run build",
-    "example": "bun src/index.ts --schema ./schema/kitchen-sink.graphql --out ./tmp/example --verbose"
+    "example": "bun src/index.ts --schema ./schema/kitchen-sink.graphql --out ./tmp/example --verbose",
+    "format": "prettier --write \"**/*.{ts,js,json,md,graphql,yml}\""
   },
   "keywords": [
     "graphql",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@types/node": "^20.11.0",
     "bun-types": "latest",
+    "prettier": "^3.6.2",
     "typescript": "^5.2.2"
   }
 }

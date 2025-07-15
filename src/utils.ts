@@ -1,14 +1,4 @@
-import {
-  GraphQLType,
-  isObjectType,
-  isListType,
-  isNonNullType,
-  GraphQLInputType,
-  isScalarType,
-  isEnumType,
-  isInterfaceType,
-  isUnionType,
-} from "graphql";
+import { GraphQLType, isObjectType, isListType, isNonNullType, GraphQLInputType, isScalarType, isEnumType, isInterfaceType, isUnionType } from "graphql";
 
 /**
  * Formats a field name as an operation name (camelCase to PascalCase)
@@ -46,15 +36,8 @@ export function formatSelectionSet(type: GraphQLType): string {
   }
 
   // For object, interface, or union types, create a selection set
-  if (
-    isObjectType(unwrappedType) ||
-    isInterfaceType(unwrappedType) ||
-    isUnionType(unwrappedType)
-  ) {
-    const fields =
-      isObjectType(unwrappedType) || isInterfaceType(unwrappedType)
-        ? unwrappedType.getFields()
-        : {};
+  if (isObjectType(unwrappedType) || isInterfaceType(unwrappedType) || isUnionType(unwrappedType)) {
+    const fields = isObjectType(unwrappedType) || isInterfaceType(unwrappedType) ? unwrappedType.getFields() : {};
 
     const fieldStrings: string[] = [];
 

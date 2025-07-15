@@ -40,21 +40,12 @@ describe("GraphQL Operation Generator", () => {
     expect(existsSync(join(TEST_OUT_DIR, "subscriptions"))).toBe(true);
 
     // Check for specific operation files
-    expect(existsSync(join(TEST_OUT_DIR, "queries", "getUser.graphql"))).toBe(
-      true
-    );
-    expect(
-      existsSync(join(TEST_OUT_DIR, "mutations", "createUser.graphql"))
-    ).toBe(true);
-    expect(
-      existsSync(join(TEST_OUT_DIR, "subscriptions", "userUpdated.graphql"))
-    ).toBe(true);
+    expect(existsSync(join(TEST_OUT_DIR, "queries", "getUser.graphql"))).toBe(true);
+    expect(existsSync(join(TEST_OUT_DIR, "mutations", "createUser.graphql"))).toBe(true);
+    expect(existsSync(join(TEST_OUT_DIR, "subscriptions", "userUpdated.graphql"))).toBe(true);
 
     // Validate contents of one query file
-    const getUserQuery = readFileSync(
-      join(TEST_OUT_DIR, "queries", "getUser.graphql"),
-      "utf8"
-    );
+    const getUserQuery = readFileSync(join(TEST_OUT_DIR, "queries", "getUser.graphql"), "utf8");
     expect(getUserQuery).toContain("query GetUser($id: ID!)");
     expect(getUserQuery).toContain("getUser(id: $id)");
   });

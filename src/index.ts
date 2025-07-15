@@ -9,9 +9,7 @@ import path from "node:path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const packageJson = JSON.parse(
-  readFileSync(path.join(__dirname, "..", "package.json"), "utf8")
-);
+const packageJson = JSON.parse(readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
 
 async function main() {
   try {
@@ -21,15 +19,8 @@ async function main() {
       .name("better-gql-generator")
       .description("Generate GraphQL operations from a local SDL schema")
       .version(packageJson.version)
-      .requiredOption(
-        "--schema <path>",
-        "Path to GraphQL schema file (SDL format)"
-      )
-      .option(
-        "--out <dir>",
-        "Output directory for generated files",
-        "generated-gql"
-      )
+      .requiredOption("--schema <path>", "Path to GraphQL schema file (SDL format)")
+      .option("--out <dir>", "Output directory for generated files", "generated-gql")
       .option("--queries", "Generate Query operations", true)
       .option("--mutations", "Generate Mutation operations", true)
       .option("--subscriptions", "Generate Subscription operations", false)

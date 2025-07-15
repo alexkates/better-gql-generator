@@ -1,0 +1,13 @@
+# Build outputs
+bin/
+node_modules/
+dist/
+
+# Temp directories
+tmp/
+
+# Logs
+*.log
+
+# OS specific files
+.DS_Store
