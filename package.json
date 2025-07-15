@@ -1,6 +1,6 @@
 {
   "name": "better-gql-generator",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A Bun + TypeScript-powered CLI tool that generates GraphQL operations from a local SDL schema",
   "main": "src/index.ts",
   "type": "module",
