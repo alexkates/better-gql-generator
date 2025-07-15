@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "type": "module",
   "bin": {
-    "better-gql-generator": "./bin/better-gql-generator"
+    "better-gql-generator": "bin/better-gql-generator"
   },
   "scripts": {
     "start": "bun src/index.ts",
